@@ -1,0 +1,32 @@
+{
+  "name": "angular-threejs",
+  "version": "0.0.1",
+  "description": "AngularJS module providing HTML element declaration to descrive a ThreeJS Scene and render it.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Elvynia/angular-threejs.git"
+  },
+  "keywords": [
+    "AngularJS",
+    "ThreeJS",
+    "WebGL",
+    "Canvas",
+    "3D"
+  ],
+  "author": "elvynia@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Elvynia/angular-threejs/issues"
+  },
+  "homepage": "https://github.com/Elvynia/angular-threejs#readme",
+  "devDependencies": {
+    "bower": "^1.7.7",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-concat": "^0.5.1"
+  }
+}

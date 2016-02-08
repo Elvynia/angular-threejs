@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<script type="text/javascript" src="../../../bower_components/jquery/dist/jquery.js"></script>
+		<script type="text/javascript" src="../../../bower_components/angular/angular.js"></script>
+		<script type="text/javascript" src="../../../bower_components/three.js/build/three.js"></script>
+		<script type="text/javascript" src="../../main/js/application.js"></script>
+		<script type="text/javascript">
+			var app = angular.module('simple-scene', ['angularThree']);
+			
+			app.controller('controller', function($scope, $document, $three) {
+				$scope.width = 1024;
+				$scope.height = 768;
+				$three.initialize();
+			});
+		</script>
+		<title>Sample Three.js</title>
+	</head>
+	<body ng-app="simple-scene" ng-controller="controller">
+		<div id="simple-scene" width="{{width}}" height="{{height}}"></div>
+		<three-renderer type="webgl" canvas="simple-scene" width="{{width}}" height="{{height}}">
+			<three-scene>
+
+			</three-scene>
+			<three-camera type="perspective" parameters="[45, {{width/height}}, 0.1, 10000]" />
+		</three-renderer>
+	</body>
+</html>

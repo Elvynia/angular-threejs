@@ -1,0 +1,25 @@
+{
+  "name": "angular-threejs",
+  "version": "0.0.1",
+  "homepage": "https://github.com/Elvynia/angular-threejs",
+  "authors": [
+    "elvynia <elvynia@gmail.com>"
+  ],
+  "description": "AngularJS module providing HTML element declaration to descrive a ThreeJS Scene and render it.",
+  "main": "index.js",
+  "keywords": [
+    "AngularJS",
+    "ThreeJS",
+    "WebGL",
+    "Canvas",
+    "3D"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
