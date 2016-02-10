@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 			separator: ';',
 		},
 		js_dep: {
-			src: ['bower_components/jquery/dist/jquery.js', 'bower_components/angular/angular.js', 'bower_components/three.js/build/three.js', 'src/main/js/application.js'],
+			src: ['bower_components/jquery/dist/jquery.js', 'bower_components/angular/angular.js', 'bower_components/three.js/build/three.js'],
 			dest: 'dist/js/angular-three.dependencies.js',
 		},
 		js: {
@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 		},
 		delpoy_dev: {
 			files: [
-				{expand:true, src: ['examples/**', 'js/**'], cwd: 'dist/', dest: 'D:/workbenchs/apache-tomcat-6.0.x/webapps/RAMM/angular-threejs'},
+				{expand:true, src: ['examples/**', 'js/**'], cwd: 'dist/', dest: 'D:/workbenchs/apache-tomcat-8.0.26/webapps/RAMM/angular-threejs'},
 			]
 		},
 		delpoy_reactis: {

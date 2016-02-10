@@ -14,6 +14,7 @@ var hasWebGL = function webglAvailable() {
 
 module.factory('$three', function($document, $timeout) {
 	var renderer, canvas, scene, camera;
+	var updateCallbacks = [];
 	return {
 		renderer: function(value) {
 			if (!value) {
@@ -57,13 +58,18 @@ module.factory('$three', function($document, $timeout) {
 					var render = function() {
 						requestAnimationFrame(render);
 						renderer.render(scene, camera);
-						//sphere.rotation.y += 0.01;
+						for (var i = 0; i < updateCallbacks.length; ++i) {
+							updateCallbacks[i]();
+						}
 					};
 					render();
 				} else {
 					console.error('No HTML container to render into. Please provide container id through three-canvas directive.');
 				}
 			});
+		},
+		pushUpdate: function(callback) {
+			updateCallbacks.push(callback);
 		}
 	};
 });

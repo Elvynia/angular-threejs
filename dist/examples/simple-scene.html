@@ -27,6 +27,9 @@
 						   new THREE.SphereGeometry(50, 16, 16),
 						   new THREE.MeshPhongMaterial({map: texture}));
 						$three.scene().add(sphere);
+						$three.pushUpdate(function() {
+							sphere.rotation.y += 0.01;
+						});
 					});
 				};
 				// Démarrage de l'application ThreeJS.
