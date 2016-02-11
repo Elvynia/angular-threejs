@@ -16,11 +16,8 @@
 					z: 100
 				};
 				$scope.material = new THREE.MeshPhongMaterial();
-				$scope.addSphere = function() {
-					$scope.sphere = new THREE.Mesh(
-					   new THREE.SphereGeometry(50, 16, 16),
-					   $scope.material);
-					$three.scene().add($scope.sphere);
+				$scope.geometry = new THREE.SphereGeometry(50, 16, 16);
+				$scope.setTexture = function() {
 					// CORS resolution as anonymous to avoid cross-domain origin conflicts.
 					THREE.TextureLoader.prototype.crossOrigin = 'anonymous';
 					var earthImgUrl = "http://localhost:8080/ramm/earth.jpg";
@@ -28,24 +25,25 @@
 					// Load the texture.
 					texloader.load(earthImgUrl, function(data) {
 						// Texture ready.
-						var texture = data;
-						texture.needsUpdate = true;
+						data.needsUpdate = true;
+						$scope.material.color.setHex(0xFFFFFF);
 						$scope.material.needsUpdate = true;
-						$scope.material.map = texture;
+						$scope.material.map = data;
 						//var material = new THREE.MeshPhongMaterial({map: texture});
 						$three.pushUpdate(function() {
 							$scope.sphere.rotation.y += 0.01;
 						});
 					});
 				};
-				$scope.addColor = function() {
+				$scope.setColor = function() {
 					$scope.material.map = null;
-					$scope.material.color = 0xFFFFFF;
+					$scope.material.color.setHex(0xDD0000);
 					$scope.material.needsUpdate = true;
 				}
 				// Démarrage de l'application ThreeJS.
 				$three.initialize(function() {
-					
+					$scope.sphere = new THREE.Mesh($scope.geometry, $scope.material);
+					$three.scene().add($scope.sphere);
 				});
 			});
 		</script>
@@ -59,8 +57,8 @@
 				<three-light type="point" parameters="{{lightColor}}" td-position="{{lightPosition}}"></three-light>
 			</three-scene>
 		</three-renderer>
-		<button ng-click="addSphere()" onClick="this.style.display = 'none'">ADD EARTH</button>
-		<button ng-click="addColor()" onClick="this.style.display = 'none'">ADD COLOR</button>
+		<button ng-click="setTexture()">SET TEXTURE</button>
+		<button ng-click="setColor()">SET COLOR</button>
 		<button ng-click="lightPosition.x = lightPosition.x + 20;">INCR X</button>
 		<button ng-click="lightPosition.x = lightPosition.x - 20;">DECR X</button>
 	</body>
