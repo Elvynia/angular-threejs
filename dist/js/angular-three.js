@@ -51,8 +51,11 @@ module.factory('$three', function($document, $timeout) {
 				webgl = value;
 			}
 		},
-		initialize: function() {
+		initialize: function(initCallback) {
 			$timeout(function() {
+				if (initCallback) {
+					initCallback();
+				}
 				if (canvas) {
 					canvas.append(renderer.domElement);
 					var render = function() {

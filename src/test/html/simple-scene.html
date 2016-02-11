@@ -15,25 +15,38 @@
 					y: 20,
 					z: 100
 				};
+				$scope.material = new THREE.MeshPhongMaterial();
 				$scope.addSphere = function() {
+					$scope.sphere = new THREE.Mesh(
+					   new THREE.SphereGeometry(50, 16, 16),
+					   $scope.material);
+					$three.scene().add($scope.sphere);
 					// CORS resolution as anonymous to avoid cross-domain origin conflicts.
 					THREE.TextureLoader.prototype.crossOrigin = 'anonymous';
 					var earthImgUrl = "http://localhost:8080/ramm/earth.jpg";
 					var texloader = new THREE.TextureLoader();
 					// Load the texture.
-					var texture = texloader.load(earthImgUrl, function() {
+					texloader.load(earthImgUrl, function(data) {
 						// Texture ready.
-						var sphere = new THREE.Mesh(
-						   new THREE.SphereGeometry(50, 16, 16),
-						   new THREE.MeshPhongMaterial({map: texture}));
-						$three.scene().add(sphere);
+						var texture = data;
+						texture.needsUpdate = true;
+						$scope.material.needsUpdate = true;
+						$scope.material.map = texture;
+						//var material = new THREE.MeshPhongMaterial({map: texture});
 						$three.pushUpdate(function() {
-							sphere.rotation.y += 0.01;
+							$scope.sphere.rotation.y += 0.01;
 						});
 					});
 				};
+				$scope.addColor = function() {
+					$scope.material.map = null;
+					$scope.material.color = 0xFFFFFF;
+					$scope.material.needsUpdate = true;
+				}
 				// Démarrage de l'application ThreeJS.
-				$three.initialize();
+				$three.initialize(function() {
+					
+				});
 			});
 		</script>
 		<title>Sample Three.js</title>
@@ -47,6 +60,7 @@
 			</three-scene>
 		</three-renderer>
 		<button ng-click="addSphere()" onClick="this.style.display = 'none'">ADD EARTH</button>
+		<button ng-click="addColor()" onClick="this.style.display = 'none'">ADD COLOR</button>
 		<button ng-click="lightPosition.x = lightPosition.x + 20;">INCR X</button>
 		<button ng-click="lightPosition.x = lightPosition.x - 20;">DECR X</button>
 	</body>
