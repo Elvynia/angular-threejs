@@ -1,4 +1,4 @@
-var module = angular.module('angularThree', []);
+angular.module('angularThree', []);
 
 var hasWebGL = function webglAvailable() {
 	try {
@@ -11,8 +11,7 @@ var hasWebGL = function webglAvailable() {
 		return false;
 	}
 };
-
-module.factory('$three', function($document, $timeout) {
+;angular.module('angularThree').factory('$three', function($timeout) {
 	var renderer, canvas, scene, camera;
 	var updateCallbacks = [];
 	return {
@@ -82,9 +81,7 @@ module.factory('$three', function($document, $timeout) {
 			updateCallbacks.push(callback);
 		}
 	};
-});
-
-module.controller('rendererController', function($scope, $three) {
+});;angular.module('angularThree').controller('rendererController', function($scope, $three) {
 	$scope.bindRenderer = function(type) {
 		var webglAvailable = hasWebGL();
 		var autoDetect = !type || type === 'autodetect';
@@ -121,7 +118,7 @@ module.controller('rendererController', function($scope, $three) {
 	};
 });
 
-module.controller('sceneController', function($scope, $three) {
+angular.module('angularThree').controller('sceneController', function($scope, $three) {
 	$scope.bindCamera = function(type, params) {
 		if (type === 'perspective') {
 			if (params.length === 4) {
@@ -180,9 +177,7 @@ module.controller('sceneController', function($scope, $three) {
 			return light;
 		}
 	};
-});
-
-module.directive('threeCanvas', function($three) {
+});;angular.module('angularThree').directive('threeCanvas', function($three) {
 	var directiveObj = {
 		restrict: 'E',
 		compile: function(element, attrs, transclude) {
@@ -198,7 +193,7 @@ module.directive('threeCanvas', function($three) {
 	return directiveObj;
 });
 
-module.directive('threeRenderer', function($three) {
+angular.module('angularThree').directive('threeRenderer', function($three) {
 	var directiveObj = {
 		restrict: 'E',
 		controller: 'rendererController',
@@ -214,7 +209,7 @@ module.directive('threeRenderer', function($three) {
 	return directiveObj;
 });
 
-module.directive('canvas', function($three) {
+angular.module('angularThree').directive('canvas', function($three) {
 	var directiveObj = {
 		restrict: 'A',
 		require: 'threeRenderer',
@@ -235,7 +230,7 @@ module.directive('canvas', function($three) {
 	return directiveObj;
 });
 
-module.directive('threeScene', function($window, $three) {
+angular.module('angularThree').directive('threeScene', function($window, $three) {
 	var directiveObj = {
 		restrict: 'E',
 		require: '^^threeRenderer',
@@ -258,7 +253,7 @@ module.directive('threeScene', function($window, $three) {
 	return directiveObj;
 });
 
-module.directive('threeCamera', function($three) {
+angular.module('angularThree').directive('threeCamera', function($three) {
 	var directiveObj = {
 		restrict: 'E',
 		require: '^^threeScene',
@@ -276,7 +271,7 @@ module.directive('threeCamera', function($three) {
 	return directiveObj;
 });
 
-module.directive('threeLight', function($three) {
+angular.module('angularThree').directive('threeLight', function($three) {
 	var directiveObj = {
 		restrict: 'E',
 		require: '^^threeScene',
@@ -289,7 +284,7 @@ module.directive('threeLight', function($three) {
 	return directiveObj;
 });
 
-module.directive('tdPosition', function($three) {
+angular.module('angularThree').directive('tdPosition', function($three) {
 	var directiveObj = {
 		restrict: 'A',
 		require: '^^threeScene',
@@ -305,7 +300,7 @@ module.directive('tdPosition', function($three) {
 	return directiveObj;
 });
 
-module.directive('tdSize', function($three) {
+angular.module('angularThree').directive('tdSize', function($three) {
 	var directiveObj = {
 		restrict: 'A',
 		require: 'threeRenderer',

@@ -12,7 +12,7 @@ module.exports = function(grunt) {
 			dest: 'dist/js/angular-three.dependencies.js',
 		},
 		js: {
-			src: ['src/main/js/application.js'],
+			src: ['src/main/js/application.js', 'src/main/js/service.js', 'src/main/js/controller.js', 'src/main/js/directive.js'],
 			dest: 'dist/js/angular-three.js',
 		},
 	},
