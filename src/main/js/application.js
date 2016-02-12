@@ -1,6 +1,6 @@
 angular.module('angularThree', []);
 
-var hasWebGL = function webglAvailable() {
+angular.module('angularThree').value('hasWebGL', function() {
 	try {
 		var canvas = document.createElement( 'canvas' );
 		return !!( window.WebGLRenderingContext && (
@@ -10,4 +10,4 @@ var hasWebGL = function webglAvailable() {
 	} catch ( e ) {
 		return false;
 	}
-};
+});

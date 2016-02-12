@@ -6,7 +6,7 @@
 		<script type="text/javascript">
 			var app = angular.module('simple-scene', ['angularThree']);
 			
-			app.controller('controller', function($scope, $document, $three) {
+			app.controller('controller', function($scope, $document, $three, $scene) {
 				$scope.width = 1024;
 				$scope.height = 768;
 				$scope.lightColor = [0xFFFFFF];
@@ -43,7 +43,7 @@
 					return true;
 				};
 				$scope.addRotation = function() {
-					$three.pushUpdate(function() {
+					$scene.addUpdate(function() {
 						$scope.sphere.rotation.y += 0.01;
 					});
 				};
@@ -55,7 +55,7 @@
 				// Démarrage de l'application ThreeJS.
 				$three.initialize(function() {
 					$scope.sphere = new THREE.Mesh($scope.geometry, $scope.material);
-					$three.scene().add($scope.sphere);
+					$scene.addObject($scope.sphere);
 				});
 			});
 		</script>

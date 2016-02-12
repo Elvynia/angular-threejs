@@ -1,4 +1,4 @@
-angular.module('angularThree').controller('rendererController', function($scope, $three) {
+angular.module('angularThree').controller('rendererController', function($scope, $three, hasWebGL) {
 	$scope.bindRenderer = function(type) {
 		var webglAvailable = hasWebGL();
 		var autoDetect = !type || type === 'autodetect';

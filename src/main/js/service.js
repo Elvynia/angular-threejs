@@ -1,6 +1,33 @@
-angular.module('angularThree').factory('$three', function($timeout) {
-	var renderer, canvas, scene, camera;
-	var updateCallbacks = [];
+angular.module('angularThree').factory('$scene', function() {
+	var scene = {
+		threeScene: null,
+		objects: [],
+		updates: [],
+	};
+	return {
+		get: function() {
+			return scene.threeScene;
+		},
+		set: function(newScene) {
+			scene.threeScene = newScene;
+		},
+		addObject: function(object) {
+			// TODO.
+			scene.threeScene.add(object);
+		},
+		addUpdate: function(update) {
+			scene.updates.push(update);
+		},
+		update: function() {
+			for (var i = 0; i < scene.updates.length; ++i) {
+				scene.updates[i]();
+			}
+		}
+	};
+});
+
+angular.module('angularThree').factory('$three', function($timeout, $scene) {
+	var renderer, canvas, camera;
 	return {
 		renderer: function(value) {
 			if (!value) {
@@ -18,9 +45,9 @@ angular.module('angularThree').factory('$three', function($timeout) {
 		},
 		scene: function(value) {
 			if (!value) {
-				return scene;
+				return $scene.get();
 			} else {
-				scene = value;
+				$scene.set(value);
 			}
 		},
 		camera: function(value) {
@@ -46,10 +73,8 @@ angular.module('angularThree').factory('$three', function($timeout) {
 					canvas.append(renderer.domElement);
 					var render = function() {
 						requestAnimationFrame(render);
-						renderer.render(scene, camera);
-						for (var i = 0; i < updateCallbacks.length; ++i) {
-							updateCallbacks[i]();
-						}
+						renderer.render($scene.get(), camera);
+						$scene.update();
 					};
 					render();
 				} else {
