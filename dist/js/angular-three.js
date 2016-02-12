@@ -71,6 +71,13 @@ module.factory('$three', function($document, $timeout) {
 				}
 			});
 		},
+		dispose: function(disposeCallback) {
+			if (disposeCallback) {
+				disposeCallback();
+			}
+			// Dispose scene objects, materials and textures.
+			console.log('Disposing Scene');
+		},
 		pushUpdate: function(callback) {
 			updateCallbacks.push(callback);
 		}
@@ -191,6 +198,22 @@ module.directive('threeCanvas', function($three) {
 	return directiveObj;
 });
 
+module.directive('threeRenderer', function($three) {
+	var directiveObj = {
+		restrict: 'E',
+		controller: 'rendererController',
+		compile: function(element, attrs, transclude) {
+			var prepostObj = {
+				pre: function(scope, element, attrs, controller) {
+					scope.bindRenderer(attrs.type);
+				}
+			};
+			return prepostObj;
+		},
+	};
+	return directiveObj;
+});
+
 module.directive('canvas', function($three) {
 	var directiveObj = {
 		restrict: 'A',
@@ -212,23 +235,7 @@ module.directive('canvas', function($three) {
 	return directiveObj;
 });
 
-module.directive('threeRenderer', function($three) {
-	var directiveObj = {
-		restrict: 'E',
-		controller: 'rendererController',
-		compile: function(element, attrs, transclude) {
-			var prepostObj = {
-				pre: function(scope, element, attrs, controller) {
-					scope.bindRenderer(attrs.type);
-				}
-			};
-			return prepostObj;
-		},
-	};
-	return directiveObj;
-});
-
-module.directive('threeScene', function($three) {
+module.directive('threeScene', function($window, $three) {
 	var directiveObj = {
 		restrict: 'E',
 		require: '^^threeRenderer',
@@ -237,6 +244,12 @@ module.directive('threeScene', function($three) {
 			var prepostObj = {
 				pre: function(scope, element, attrs, controller) {
 					scope.bindScene();
+				},
+				post: function(scope, element, attrs, controller) {
+					$window.addEventListener('beforeunload', function() {
+						// Add dispose callback attribute with scope '&'.
+						$three.dispose();
+					});
 				}
 			};
 			return prepostObj;
