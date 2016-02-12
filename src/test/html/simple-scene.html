@@ -18,21 +18,33 @@
 				$scope.material = new THREE.MeshPhongMaterial();
 				$scope.geometry = new THREE.SphereGeometry(50, 16, 16);
 				$scope.setTexture = function() {
-					// CORS resolution as anonymous to avoid cross-domain origin conflicts.
-					THREE.TextureLoader.prototype.crossOrigin = 'anonymous';
-					var earthImgUrl = "http://localhost:8080/ramm/earth.jpg";
-					var texloader = new THREE.TextureLoader();
-					// Load the texture.
-					texloader.load(earthImgUrl, function(data) {
-						// Texture ready.
-						data.needsUpdate = true;
+					if ($scope.material && $scope.material.map != null) {
+						return false;
+					}
+					if ($scope.texture) {
 						$scope.material.color.setHex(0xFFFFFF);
 						$scope.material.needsUpdate = true;
-						$scope.material.map = data;
-						//var material = new THREE.MeshPhongMaterial({map: texture});
-						$three.pushUpdate(function() {
-							$scope.sphere.rotation.y += 0.01;
+						$scope.material.map = $scope.texture;
+					} else {
+						// CORS resolution as anonymous to avoid cross-domain origin conflicts.
+						THREE.TextureLoader.prototype.crossOrigin = 'anonymous';
+						var earthImgUrl = "http://localhost:8080/ramm/earth.jpg";
+						var texloader = new THREE.TextureLoader();
+						// Load the texture.
+						texloader.load(earthImgUrl, function(data) {
+							// Texture ready.
+							$scope.texture = data;
+							$scope.texture.needsUpdate = true;
+							$scope.material.color.setHex(0xFFFFFF);
+							$scope.material.needsUpdate = true;
+							$scope.material.map = $scope.texture;
 						});
+					}
+					return true;
+				};
+				$scope.addRotation = function() {
+					$three.pushUpdate(function() {
+						$scope.sphere.rotation.y += 0.01;
 					});
 				};
 				$scope.setColor = function() {
@@ -57,8 +69,8 @@
 				<three-light type="point" parameters="{{lightColor}}" td-position="{{lightPosition}}"></three-light>
 			</three-scene>
 		</three-renderer>
-		<button ng-click="setTexture()">SET TEXTURE</button>
-		<button ng-click="setColor()">SET COLOR</button>
+		<button ng-click="setTexture() || setColor()">Switch Texture/Color</button>
+		<button ng-click="addRotation()">Add Rotation</button>
 		<button ng-click="lightPosition.x = lightPosition.x + 20;">INCR X</button>
 		<button ng-click="lightPosition.x = lightPosition.x - 20;">DECR X</button>
 	</body>

@@ -5,6 +5,7 @@ module.exports = function(grunt) {
 	concat: {
 		options: {
 			separator: ';',
+			timestamp: true,
 		},
 		js_dep: {
 			src: ['bower_components/jquery/dist/jquery.js', 'bower_components/angular/angular.js', 'bower_components/three.js/build/three.js'],
