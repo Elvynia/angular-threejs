@@ -14,8 +14,8 @@ angular.module('angularThree').value('hasWebGL', function() {
 ;angular.module('angularThree').factory('$scene', function() {
 	var scene = {
 		threeScene: null,
-		objects: [],
-		updates: [],
+		dataSet: {},
+		globalUpdates: [],
 	};
 	return {
 		get: function() {
@@ -25,15 +25,36 @@ angular.module('angularThree').value('hasWebGL', function() {
 			scene.threeScene = newScene;
 		},
 		addObject: function(object) {
-			// TODO.
 			scene.threeScene.add(object);
 		},
-		addUpdate: function(update) {
-			scene.updates.push(update);
+		addData: function(data) {
+			if (!data.name) {
+				console.error('Cannot add Data to the scene withtout a name.')
+			} else {
+				if (data.objects) {
+					for (var i = 0; i < data.objects.length; ++i) {
+						if (data.objects[i].active) {
+							scene.threeScene.add(data.objects[i].mesh);
+						}
+					}
+				}
+				scene.dataSet[data.name] = data;
+			}
+		},
+		addGlobalUpdate: function(update) {
+			scene.globalUpdates.push(update);
 		},
 		update: function() {
-			for (var i = 0; i < scene.updates.length; ++i) {
-				scene.updates[i]();
+			for (var i = 0; i < scene.globalUpdates.length; ++i) {
+				scene.globalUpdates[i]();
+			}
+			for (var name in scene.dataSet) {
+				var update = scene.dataSet[name].updates;
+				for (var i = 0; i < update.length; ++i) {
+					if (update[i].active) {
+						update[i].callback(scene.dataSet[name].objects);
+					}
+				}
 			}
 		}
 	};

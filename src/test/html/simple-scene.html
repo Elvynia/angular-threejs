@@ -15,16 +15,33 @@
 					y: 20,
 					z: 100
 				};
-				$scope.material = new THREE.MeshPhongMaterial();
-				$scope.geometry = new THREE.SphereGeometry(50, 16, 16);
+				$scope.sphereRotation = true;
+				$scope.$watch('sphereRotation', function(newValue) {
+					$scope.sphere.updates[0].active = newValue;
+				});
+				$scope.rotateSphere = function() {
+					$scope.sphere.objects[0].mesh.rotation.y += 0.01;
+				};
+				$scope.sphere = {
+					name: 'Sphere',
+					objects: [{
+						active: true,
+						material: new THREE.MeshPhongMaterial(),
+						geometry: new THREE.SphereGeometry(50, 16, 16),
+					}],
+					updates: [{
+						active: $scope.sphereRotation,
+						callback: $scope.rotateSphere,
+					}],
+				};
 				$scope.setTexture = function() {
-					if ($scope.material && $scope.material.map != null) {
+					if ($scope.sphere.objects[0].material && $scope.sphere.objects[0].material.map != null) {
 						return false;
 					}
 					if ($scope.texture) {
-						$scope.material.color.setHex(0xFFFFFF);
-						$scope.material.needsUpdate = true;
-						$scope.material.map = $scope.texture;
+						$scope.sphere.objects[0].material.color.setHex(0xFFFFFF);
+						$scope.sphere.objects[0].material.needsUpdate = true;
+						$scope.sphere.objects[0].material.map = $scope.texture;
 					} else {
 						// CORS resolution as anonymous to avoid cross-domain origin conflicts.
 						THREE.TextureLoader.prototype.crossOrigin = 'anonymous';
@@ -35,27 +52,26 @@
 							// Texture ready.
 							$scope.texture = data;
 							$scope.texture.needsUpdate = true;
-							$scope.material.color.setHex(0xFFFFFF);
-							$scope.material.needsUpdate = true;
-							$scope.material.map = $scope.texture;
+							$scope.sphere.objects[0].material.color.setHex(0xFFFFFF);
+							$scope.sphere.objects[0].material.needsUpdate = true;
+							$scope.sphere.objects[0].material.map = $scope.texture;
 						});
 					}
 					return true;
 				};
 				$scope.addRotation = function() {
-					$scene.addUpdate(function() {
-						$scope.sphere.rotation.y += 0.01;
-					});
+					$scene.addGlobalUpdate($scope.rotateSphere);
 				};
 				$scope.setColor = function() {
-					$scope.material.map = null;
-					$scope.material.color.setHex(0xDD0000);
-					$scope.material.needsUpdate = true;
+					$scope.sphere.objects[0].material.map = null;
+					$scope.sphere.objects[0].material.color.setHex(0xDD0000);
+					$scope.sphere.objects[0].material.needsUpdate = true;
 				}
 				// Démarrage de l'application ThreeJS.
 				$three.initialize(function() {
-					$scope.sphere = new THREE.Mesh($scope.geometry, $scope.material);
-					$scene.addObject($scope.sphere);
+					var obj = $scope.sphere.objects[0];
+					obj.mesh = new THREE.Mesh(obj.geometry, obj.material);
+					$scene.addData($scope.sphere);
 				});
 			});
 		</script>
@@ -71,6 +87,7 @@
 		</three-renderer>
 		<button ng-click="setTexture() || setColor()">Switch Texture/Color</button>
 		<button ng-click="addRotation()">Add Rotation</button>
+		<input type="checkbox" ng-model="sphereRotation"></input>Inner rotation
 		<button ng-click="lightPosition.x = lightPosition.x + 20;">INCR X</button>
 		<button ng-click="lightPosition.x = lightPosition.x - 20;">DECR X</button>
 	</body>
