@@ -44,6 +44,33 @@ angular.module('angularThree').value('hasWebGL', function() {
 		addGlobalUpdate: function(update) {
 			scene.globalUpdates.push(update);
 		},
+		dispose: function() {
+			for (var name in scene.dataSet) {
+				var objects = scene.dataSet[name].objects;
+				for (var i = 0; i < objects.length; ++i) {
+					var object = objects[i];
+					if (object.active && object.mesh) {
+						var mesh = object.mesh;
+						console.debug('Removing object from scene.');
+						scene.threeScene.remove(object.mesh);
+						console.debug('Disposing Mesh object.');
+						//mesh.dispose();
+						if (mesh.geometry) {
+							console.debug('Disposing Geometry object.');
+							mesh.geometry.dispose();
+						}
+						if (mesh.material) {
+							if (mesh.material.map) {
+								console.debug('Disposing Material Map object.');
+								mesh.material.map.dispose();
+							}
+							console.debug('Disposing Material object.');
+							mesh.material.dispose();
+						}
+					}
+				}
+			}
+		},
 		update: function() {
 			for (var i = 0; i < scene.globalUpdates.length; ++i) {
 				scene.globalUpdates[i]();
@@ -61,8 +88,11 @@ angular.module('angularThree').value('hasWebGL', function() {
 });
 
 angular.module('angularThree').factory('$three', function($timeout, $scene) {
-	var renderer, canvas, camera;
+	var renderer, canvas, camera, id;
 	return {
+		getId: function() {
+			return id;
+		},
 		renderer: function(value) {
 			if (!value) {
 				return renderer;
@@ -106,7 +136,7 @@ angular.module('angularThree').factory('$three', function($timeout, $scene) {
 				if (canvas) {
 					canvas.append(renderer.domElement);
 					var render = function() {
-						requestAnimationFrame(render);
+						id = requestAnimationFrame(render);
 						renderer.render($scene.get(), camera);
 						$scene.update();
 					};
@@ -121,7 +151,10 @@ angular.module('angularThree').factory('$three', function($timeout, $scene) {
 				disposeCallback();
 			}
 			// Dispose scene objects, materials and textures.
-			console.log('Disposing Scene');
+			console.debug('Disposing Scene');
+			$scene.dispose();
+			console.log('Stopping AnimationFrame with ID:' + id);
+			cancelAnimationFrame(id);
 		},
 		pushUpdate: function(callback) {
 			updateCallbacks.push(callback);
