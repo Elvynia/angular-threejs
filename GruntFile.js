@@ -12,7 +12,7 @@ module.exports = function(grunt) {
 			dest: 'dist/js/angular-three.dependencies.js',
 		},
 		js: {
-			src: ['src/main/js/application.js', 'src/main/js/service.js', 'src/main/js/controller.js', 'src/main/js/directive.js'],
+			src: ['src/main/js/service.js', 'src/main/js/controller.js', 'src/main/js/directive.js', 'src/main/js/application.js'],
 			dest: 'dist/js/angular-three.js',
 		},
 	},
@@ -32,24 +32,41 @@ module.exports = function(grunt) {
 				{expand:true, src: ['**'], cwd: 'src/test/html', dest: 'dist/examples/'},
 			]
 		},
-		delpoy_dev: {
+		deploy_dev: {
 			files: [
 				{expand:true, src: ['examples/**', 'js/**'], cwd: 'dist/', dest: 'D:/workbenchs/apache-tomcat-8.0.26/webapps/RAMM/angular-threejs'},
 			]
 		},
-		delpoy_reactis: {
+		deploy_reactis: {
 			files: [
 				{expand:true, src: ['examples/**', 'js/**'], cwd: 'dist/', dest: 'C:/workspaces/SWAG/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/RAMM/angular-threejs'},
 			]
 		}
-	}
+	},
+	watch: {
+		options: {
+			interrupt : true,
+			debounceDelay: 250,
+		},
+		reactis: {
+			files : 'src/**',
+			tasks : ['concat:js', 'uglify:js_min', 'copy:html_test', 'copy:deploy_reactis'],
+		},
+		dev: {
+			files: 'src/**',
+			tasks: ['concat:js', 'uglify:js_min', 'copy:html_test', 'copy:deploy_dev'],
+		},
+	},
   });
 
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('default', ['concat', 'uglify', 'copy:html_test']);
-  grunt.registerTask('dev', ['concat', 'uglify', 'copy:html_test', 'copy:delpoy_dev']);
-  grunt.registerTask('reactis', ['concat', 'uglify', 'copy:html_test', 'copy:delpoy_reactis']);
+  grunt.registerTask('dev', ['concat', 'uglify', 'copy:html_test', 'copy:deploy_dev']);
+  grunt.registerTask('reactis', ['concat', 'uglify', 'copy:html_test', 'copy:deploy_reactis']);  grunt.registerTask('dev', ['concat', 'uglify', 'copy:html_test', 'copy:delpoy_dev']);
+  grunt.registerTask('watch_reactis', ['watch:reactis']);
+  grunt.registerTask('watch_dev', ['watch:dev']);
 };

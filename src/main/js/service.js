@@ -1,5 +1,7 @@
 (function() {
-	angular.module('angularThree').factory('$scene', function() {
+	var app = angular.module('angularThreeService', []);
+	
+	app.factory('$scene', function() {
 		var scene = {
 			threeScene: null,
 			dataSet: {},
@@ -21,7 +23,7 @@
 				} else {
 					if (data.objects) {
 						for (var i = 0; i < data.objects.length; ++i) {
-							if (data.objects[i].active) {
+							if (data.active) {
 								scene.threeScene.add(data.objects[i].mesh);
 							}
 						}
@@ -41,8 +43,6 @@
 							var mesh = object.mesh;
 							console.debug('Removing object from scene.');
 							scene.threeScene.remove(object.mesh);
-							//console.debug('Disposing Mesh object.');
-							//mesh.dispose();
 							if (mesh.geometry) {
 								console.debug('Disposing Geometry object.');
 								mesh.geometry.dispose();
@@ -64,10 +64,12 @@
 					scene.globalUpdates[i]();
 				}
 				for (var name in scene.dataSet) {
-					var update = scene.dataSet[name].updates;
-					for (var i = 0; i < update.length; ++i) {
-						if (update[i].active) {
-							update[i].callback(scene.dataSet[name].objects);
+					var updates = scene.dataSet[name].updates;
+					if (updates) {
+						for (var i = 0; i < updates.length; ++i) {
+							if (updates[i].active) {
+								updates[i].callback(scene.dataSet[name].objects);
+							}
 						}
 					}
 				}
@@ -75,7 +77,7 @@
 		};
 	});
 
-	angular.module('angularThree').factory('$three', function($timeout, $scene) {
+	app.factory('$three', function($timeout, $scene) {
 		var renderer, canvas, camera, id;
 		return {
 			getId: function() {

@@ -23,11 +23,11 @@
 					$scope.sphereObject.mesh.rotation.y += 0.01;
 				};
 				$scope.sphereObject = {
-					active: true,
 					material: new THREE.MeshPhongMaterial(),
 					geometry: new THREE.SphereGeometry(50, 16, 16),
 				};
 				$scope.sphereData = {
+					active: true,
 					name: 'Sphere',
 					objects: [$scope.sphereObject],
 					updates: [{
@@ -73,7 +73,7 @@
 					$scope.sphereObject.mesh = new THREE.Mesh(
 						$scope.sphereObject.geometry,
 						$scope.sphereObject.material);
-					$scene.addData($scope.sphereData);
+					//$scene.addData($scope.sphereData);
 				});
 			});
 		</script>
@@ -85,12 +85,24 @@
 			<three-scene>
 				<three-camera type="perspective" parameters="[45, {{width/height}}, 0.1, 10000]" td-position='{"x":0, "y":0, "z":300}'></three-camera>
 				<three-light type="point" parameters="{{lightColor}}" td-position="{{lightPosition}}"></three-light>
+				<three-mesh name="StaticSphere">
+					<three-geometry type="SphereGeometry" parameters="[50, 16, 16]"></three-geometry>
+					<three-material type="MeshPhongMaterial" parameters="{color: 56576}">
+						<three-texture src=""></three-texture>
+						<!--img src="" three-texture></img-->
+					</three-material>
+				</three-mesh>
+				<!-- <three-mesh name="DynamicSphere" td-mesh=""></three-mesh> -->
 			</three-scene>
 		</three-renderer>
-		<button ng-click="setTexture() || setColor()">Switch Texture/Color</button>
-		<button ng-click="addRotation()">Add Rotation</button>
-		<input type="checkbox" ng-model="sphereRotation"></input>Inner rotation
-		<button ng-click="lightPosition.x = lightPosition.x + 20;">INCR X</button>
-		<button ng-click="lightPosition.x = lightPosition.x - 20;">DECR X</button>
+		<div>
+			<button ng-click="setTexture() || setColor()">Switch Texture/Color</button>
+			<button ng-click="addRotation()">Add Rotation</button>
+			<input type="checkbox" ng-model="sphereRotation"></input>Inner rotation
+		</div>
+		<div>
+			<button ng-click="lightPosition.x = lightPosition.x + 20;">INCR X</button>
+			<button ng-click="lightPosition.x = lightPosition.x - 20;">DECR X</button>
+		</div>
 	</body>
 </html>

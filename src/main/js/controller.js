@@ -1,6 +1,9 @@
 (function() {
-	angular.module('angularThree').controller('rendererController', function($scope, $three, hasWebGL) {
-		$scope.bindRenderer = function(type) {
+	var app = angular.module('angularThreeController', ['angularThreeService']);
+	
+	app.controller('RendererController', function($three, hasWebGL) {
+		var vm = this;
+		vm.bindRenderer = function(type) {
 			var webglAvailable = hasWebGL();
 			var autoDetect = !type || type === 'autodetect';
 			if (type === 'webgl' || (autoDetect && webglAvailable)) {
@@ -17,12 +20,12 @@
 				return renderer;
 			}
 		};
-		$scope.bindScene = function() {
+		vm.bindScene = function() {
 			var scene = new THREE.Scene();
 			$three.scene(scene);
 			return scene;
 		};
-		$scope.bindSize = function(object, size) {
+		vm.bindSize = function(object, size) {
 			if (object && object.setSize) {
 				if (angular.isArray(size)) {
 					object.setSize(size[0], size[1]);
@@ -35,8 +38,9 @@
 		};
 	});
 
-	angular.module('angularThree').controller('sceneController', function($scope, $three) {
-		$scope.bindCamera = function(type, params) {
+	app.controller('SceneController', function($three) {
+		var vm = this;
+		vm.bindCamera = function(type, params) {
 			if (type === 'perspective') {
 				if (params.length === 4) {
 					var camera = new THREE.PerspectiveCamera(
@@ -70,7 +74,7 @@
 				return camera;
 			}
 		};
-		$scope.bindPosition = function(object, position) {
+		vm.bindPosition = function(object, position) {
 			if (object && position) {
 				object.position.x = position.x || 0;
 				object.position.y = position.y || 0;
@@ -79,7 +83,7 @@
 				console.error('Wrong arguments ['+object+', '+position+']');
 			}
 		};
-		$scope.bindLight = function(type, params) {
+		vm.bindLight = function(type, params) {
 			if (type === 'point') {
 				if (params.length === 1) {
 					var light = new THREE.PointLight(params);
@@ -92,6 +96,25 @@
 			if (light) {
 				$three.scene().add(light);
 				return light;
+			}
+		};
+	});
+	
+	app.controller('ObjectController', function($three) {
+		var vm = this;
+		vm.buildThree = function(name, params) {
+			if (name) {
+				if (params && params.length > 0) {
+					console.debug('Building THREE.' + name + ' with params=' + params);
+					var obj = Object.create(THREE[name].prototype);
+					THREE[name].apply(obj, params);
+					return obj;
+				} else {
+					console.debug('Building THREE.' + name + ' with params:' + JSON.stringify(params));
+					return new THREE[name](params);
+				}
+			} else {
+				console.error('Cannot instanciate THREE object with undefined name.');
 			}
 		};
 	});

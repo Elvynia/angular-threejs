@@ -1,5 +1,7 @@
 (function() {
-	angular.module('angularThree').directive('threeCanvas', function($three) {
+	var app = angular.module('angularThreeDirective', ['angularThreeController', 'angularThreeService']);
+	
+	app.directive('threeCanvas', function($three) {
 		var directiveObj = {
 			restrict: 'E',
 			compile: function(element, attrs, transclude) {
@@ -15,14 +17,14 @@
 		return directiveObj;
 	});
 
-	angular.module('angularThree').directive('threeRenderer', function($three) {
+	app.directive('threeRenderer', function($three) {
 		var directiveObj = {
 			restrict: 'E',
-			controller: 'rendererController',
+			controller: 'RendererController',
 			compile: function(element, attrs, transclude) {
 				var prepostObj = {
 					pre: function(scope, element, attrs, controller) {
-						scope.bindRenderer(attrs.type);
+						controller.bindRenderer(attrs.type);
 					}
 				};
 				return prepostObj;
@@ -31,7 +33,7 @@
 		return directiveObj;
 	});
 
-	angular.module('angularThree').directive('canvas', function($three) {
+	app.directive('canvas', function($three) {
 		var directiveObj = {
 			restrict: 'A',
 			require: 'threeRenderer',
@@ -52,15 +54,15 @@
 		return directiveObj;
 	});
 
-	angular.module('angularThree').directive('threeScene', function($window, $three) {
+	app.directive('threeScene', function($window, $three) {
 		var directiveObj = {
 			restrict: 'E',
 			require: '^^threeRenderer',
-			controller: 'sceneController',
+			controller: 'SceneController',
 			compile: function(element, attrs, transclude) {
 				var prepostObj = {
 					pre: function(scope, element, attrs, controller) {
-						scope.bindScene();
+						controller.bindScene();
 					},
 					post: function(scope, element, attrs, controller) {
 						$window.addEventListener('beforeunload', function() {
@@ -75,7 +77,7 @@
 		return directiveObj;
 	});
 
-	angular.module('angularThree').directive('threeCamera', function($three) {
+	app.directive('threeCamera', function($three) {
 		var directiveObj = {
 			restrict: 'E',
 			require: '^^threeScene',
@@ -83,7 +85,7 @@
 				var prepostObj = {
 					pre: function(scope, element, attrs, controller) {
 						var params = attrs.parameters ? angular.fromJson(attrs.parameters) : [];
-						var camera = scope.bindCamera(attrs.type, params);
+						var camera = controller.bindCamera(attrs.type, params);
 						element.attr('id', camera.id);
 					}
 				};
@@ -93,20 +95,84 @@
 		return directiveObj;
 	});
 
-	angular.module('angularThree').directive('threeLight', function($three) {
+	app.directive('threeLight', function($three) {
 		var directiveObj = {
 			restrict: 'E',
 			require: '^^threeScene',
 			link: function(scope, element, attrs, controller) {
 				var parameters = attrs.parameters ? angular.fromJson(attrs.parameters) : [];
-				var light = scope.bindLight(attrs.type, parameters);
+				var light = controller.bindLight(attrs.type, parameters);
 				element.attr('id', light.id);
 			},
 		};
 		return directiveObj;
 	});
+	
+	app.directive('threeMesh', function($scene) {
+		var directiveObj = {
+			restrict: 'E',
+			controller: 'ObjectController',
+			scope: {
+				'mesh': '=tdMesh',
+			},
+			link: function(scope, element, attrs, controller) {
+				if (attrs.name && attrs.name.length > 0) {
+					scope.name = attrs.name;
+				} else {
+					console.warn('Building data with name as mesh.id');
+					scope.name = mesh.id;
+				}
+				if (scope.mesh) {
+					console.debug('Mesh built by javascript : ' + JSON.stringify(scope.mesh));
+				} else if (scope.geometry && scope.material) {
+					scope.mesh = controller.buildThree('Mesh', [scope.geometry, scope.material]);
+					var data = {
+						active: true,
+						name: scope.name,
+						objects: [{
+							mesh: scope.mesh,
+							geometry: scope.geometry,
+							material: scope.material,
+						}],
+					};
+					$scene.addData(data);
+				} else {
+					console.error('Cannot create mesh without tdMesh attribute or sub directives.');
+				}
+			},
+		};
+		return directiveObj;
+	});
+	
+	app.directive('threeGeometry', function() {
+		var directiveObj = {
+			restrict: 'E',
+			require: '^^threeMesh',
+			scope: {
+				parameters: '=',
+			},
+			link: function(scope, element, attrs, controller) {
+				scope.$parent.geometry = controller.buildThree(attrs.type, scope.parameters);
+			},
+		};
+		return directiveObj;
+	});
+	
+	app.directive('threeMaterial', function() {
+		var directiveObj = {
+			restrict: 'E',
+			require: '^^threeMesh',
+			scope: {
+				parameters: '=',
+			},
+			link: function(scope, element, attrs, controller) {
+				scope.$parent.material = controller.buildThree(attrs.type, scope.parameters);
+			},
+		};
+		return directiveObj;
+	});
 
-	angular.module('angularThree').directive('tdPosition', function($three) {
+	app.directive('tdPosition', function($three) {
 		var directiveObj = {
 			restrict: 'A',
 			require: '^^threeScene',
@@ -115,21 +181,21 @@
 					var id = parseInt(element.attr('id'), 10);
 					var obj = $three.scene().getObjectById(id);
 					var position = newVal ? angular.fromJson(newVal) : {};
-					scope.bindPosition(obj, position);
+					controller.bindPosition(obj, position);
 				});
 			},
 		};
 		return directiveObj;
 	});
 
-	angular.module('angularThree').directive('tdSize', function($three) {
+	app.directive('tdSize', function($three) {
 		var directiveObj = {
 			restrict: 'A',
 			require: 'threeRenderer',
 			link: function(scope, element, attrs, controller) {
 				attrs.$observe('tdSize', function(newVal) {
 					var size = newVal ? angular.fromJson(newVal) : {};
-					scope.bindSize($three.renderer(), size);
+					controller.bindSize($three.renderer(), size);
 				});
 			},
 		};

@@ -1,5 +1,5 @@
 (function() {
-	angular.module('angularThree', []);
+	angular.module('angularThree', ['angularThreeService', 'angularThreeController', 'angularThreeDirective']);
 
 	angular.module('angularThree').value('hasWebGL', function() {
 		try {
@@ -8,7 +8,7 @@
 				canvas.getContext( 'webgl' ) ||
 				canvas.getContext( 'experimental-webgl' ) )
 			);
-		} catch ( e ) {
+		} catch (e) {
 			return false;
 		}
 	});
