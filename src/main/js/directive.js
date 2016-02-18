@@ -111,9 +111,9 @@
 	app.directive('threeMesh', function($scene) {
 		var directiveObj = {
 			restrict: 'E',
-			controller: 'ObjectController',
-			scope: {
-				'mesh': '=tdMesh',
+			controller: 'ObjectController as ctrl',
+			bindToController: {
+				mesh: '=tdMesh',
 			},
 			link: function(scope, element, attrs, controller) {
 				if (attrs.name && attrs.name.length > 0) {
@@ -122,8 +122,9 @@
 					console.warn('Building data with name as mesh.id');
 					scope.name = mesh.id;
 				}
-				if (scope.mesh) {
-					console.debug('Mesh built by javascript : ' + JSON.stringify(scope.mesh));
+				if (controller.mesh) {
+					scope.mesh = controller.mesh;
+					$scene.addObject(scope.mesh);
 				} else if (scope.geometry && scope.material) {
 					scope.mesh = controller.buildThree('Mesh', [scope.geometry, scope.material]);
 					var data = {

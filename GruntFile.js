@@ -66,7 +66,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['concat', 'uglify', 'copy:html_test']);
   grunt.registerTask('dev', ['concat', 'uglify', 'copy:html_test', 'copy:deploy_dev']);
-  grunt.registerTask('reactis', ['concat', 'uglify', 'copy:html_test', 'copy:deploy_reactis']);  grunt.registerTask('dev', ['concat', 'uglify', 'copy:html_test', 'copy:delpoy_dev']);
+  grunt.registerTask('reactis', ['concat', 'uglify', 'copy:html_test', 'copy:deploy_reactis']);
   grunt.registerTask('watch_reactis', ['watch:reactis']);
   grunt.registerTask('watch_dev', ['watch:dev']);
 };
