@@ -21,11 +21,9 @@
 				if (!data.name) {
 					console.error('Cannot add Data to the scene withtout a name.')
 				} else {
-					if (data.objects) {
+					if (data.objects && data.active) {
 						for (var i = 0; i < data.objects.length; ++i) {
-							if (data.active) {
-								scene.threeScene.add(data.objects[i].mesh);
-							}
+							scene.threeScene.add(data.objects[i].mesh);
 						}
 					}
 					scene.dataSet[data.name] = data;
@@ -150,5 +148,19 @@
 				updateCallbacks.push(callback);
 			}
 		};
+	});
+	
+	app.factory('$texture', function() {
+		var loader = new THREE.TextureLoader();
+		var serviceObj = {
+			load: function(url, material, update) {
+				loader.load(url, function(data) {
+					//data.needsUpdate = true;
+					material.map = data;
+					material.needsUpdate = update != undefined ? update : true;
+				});
+			},
+		};
+		return serviceObj;
 	});
 })();

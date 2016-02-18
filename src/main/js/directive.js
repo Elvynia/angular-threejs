@@ -189,8 +189,31 @@
 			scope: {
 				parameters: '=',
 			},
-			link: function(scope, element, attrs, controller) {
-				scope.$parent.material = controller.buildThree(attrs.type, scope.parameters);
+			compile: function(element, attrs, transclude) {
+				var prepostObj = {
+					pre: function(scope, element, attrs, controller) {
+						scope.$parent.material = controller.buildThree(attrs.type, scope.parameters);
+					},
+					post: angular.noop
+				};
+				return prepostObj;
+			},
+		};
+		return directiveObj;
+	});
+	
+	app.directive('threeTexture', function($texture) {
+		var directiveObj = {
+			restrict: 'E',
+			compile: function(element, attrs, transclude) {
+				var prepostObj = {
+					pre: function(scope, element, attrs, controller) {
+						// scope.material.color.setHex(0xFFFFFF);
+						$texture.load(attrs.src, scope.material);
+					},
+					post: angular.noop
+				};
+				return prepostObj;
 			},
 		};
 		return directiveObj;

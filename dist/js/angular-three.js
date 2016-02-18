@@ -21,11 +21,9 @@
 				if (!data.name) {
 					console.error('Cannot add Data to the scene withtout a name.')
 				} else {
-					if (data.objects) {
+					if (data.objects && data.active) {
 						for (var i = 0; i < data.objects.length; ++i) {
-							if (data.active) {
-								scene.threeScene.add(data.objects[i].mesh);
-							}
+							scene.threeScene.add(data.objects[i].mesh);
 						}
 					}
 					scene.dataSet[data.name] = data;
@@ -150,6 +148,20 @@
 				updateCallbacks.push(callback);
 			}
 		};
+	});
+	
+	app.factory('$texture', function() {
+		var loader = new THREE.TextureLoader();
+		var serviceObj = {
+			load: function(url, material, update) {
+				loader.load(url, function(data) {
+					//data.needsUpdate = true;
+					material.map = data;
+					material.needsUpdate = update != undefined ? update : true;
+				});
+			},
+		};
+		return serviceObj;
 	});
 })();;(function() {
 	var app = angular.module('angularThreeController', ['angularThreeService']);
@@ -462,8 +474,31 @@
 			scope: {
 				parameters: '=',
 			},
-			link: function(scope, element, attrs, controller) {
-				scope.$parent.material = controller.buildThree(attrs.type, scope.parameters);
+			compile: function(element, attrs, transclude) {
+				var prepostObj = {
+					pre: function(scope, element, attrs, controller) {
+						scope.$parent.material = controller.buildThree(attrs.type, scope.parameters);
+					},
+					post: angular.noop
+				};
+				return prepostObj;
+			},
+		};
+		return directiveObj;
+	});
+	
+	app.directive('threeTexture', function($texture) {
+		var directiveObj = {
+			restrict: 'E',
+			compile: function(element, attrs, transclude) {
+				var prepostObj = {
+					pre: function(scope, element, attrs, controller) {
+						// scope.material.color.setHex(0xFFFFFF);
+						$texture.load(attrs.src, scope.material);
+					},
+					post: angular.noop
+				};
+				return prepostObj;
 			},
 		};
 		return directiveObj;
