@@ -383,6 +383,7 @@
 	
 	app.directive('threeMesh', function($scene) {
 		var directiveObj = {
+			priority: 100,
 			restrict: 'E',
 			controller: 'ObjectController as ctrl',
 			bindToController: {
@@ -412,6 +413,28 @@
 					$scene.addData(data);
 				} else {
 					console.error('Cannot create mesh without tdMesh attribute or sub directives.');
+				}
+			},
+		};
+		return directiveObj;
+	});
+	
+	app.directive('meshPosition', function() {
+		var directiveObj = {
+			priority: 101,
+			restrict: 'A',
+			require: 'threeMesh',
+			scope: {
+				position: '=meshPosition',
+			},
+			link: function(scope, element, attrs, controller) {
+				if (scope.$parent.mesh) {
+					var mesh = scope.$parent.mesh;
+					mesh.position.x = scope.position.x;
+					mesh.position.y = scope.position.y;
+					mesh.position.z = scope.position.z;
+				} else {
+					console.error('Cannot add position to undefined mesh.');
 				}
 			},
 		};

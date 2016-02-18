@@ -85,13 +85,14 @@
 			<three-scene>
 				<three-camera type="perspective" parameters="[45, {{width/height}}, 0.1, 10000]" td-position='{"x":0, "y":0, "z":300}'></three-camera>
 				<three-light type="point" parameters="{{lightColor}}" td-position="{{lightPosition}}"></three-light>
-				<three-mesh id="StaticSphere" td-position='{"x":100, "y":0, "z":0}'>
+				<three-mesh name="StaticSphere" mesh-position='{"x":80, "y":0, "z":0}'>
 					<three-geometry type="SphereGeometry" parameters="[50, 16, 16]"></three-geometry>
 					<three-material type="MeshPhongMaterial" parameters="{color: 56576}">
 						<three-texture src=""></three-texture>
 					</three-material>
 				</three-mesh>
-				<!-- <three-mesh id="DynamicSphere" td-mesh="sphereObject.mesh"></three-mesh> -->
+				<three-mesh name="DynamicSphere" td-mesh="sphereObject.mesh"
+					mesh-position='{"x":-80, "y":0, "z":0}'></three-mesh>
 			</three-scene>
 		</three-renderer>
 		<div>
